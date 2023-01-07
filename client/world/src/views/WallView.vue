@@ -45,6 +45,7 @@ const onClickUpload = (ev: Event) => {
 
 <template>
     <Header />
+    
     <div class="wall">
         <div class="wall--wrapper--form">
             <form class="wall--form" action="">
