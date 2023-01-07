@@ -27,3 +27,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; */
 }
+
+.title {
+  margin: 20px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.button {
+  background-color: var(--color-background-dark);
+  border-radius: 5px;
+  border: none;
+  color: var(--color-text-light);
+}
