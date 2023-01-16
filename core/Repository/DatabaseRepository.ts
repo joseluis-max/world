@@ -34,6 +34,11 @@ class Database {
                                               createAt,
                                               updateAt ]);
   };
+
+  async uploadPublication(content: String, user: Number, date: Date, _listImages: Array<ArrayBuffer>, _listVideos: Array<String>) {
+      const query = `INSERT INTO world."Publication" (content, date, "user") VALUES ($1, $2, $3)`;
+      return await this.database.query(query, [content, date, user]);
+  }
 }
 
 export default Database;

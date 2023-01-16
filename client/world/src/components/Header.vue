@@ -1,4 +1,31 @@
 <script setup lang="ts">
+import router from '@/router';
+
+const handlerLogOut = async () => {
+    const token: string = sessionStorage.getItem('token');
+    try {
+        const response: Response = await fetch('http://localhost:3000/world/api/v1/logout', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': token,
+            },
+        });
+
+        if (response.status === 200 && response.ok) {
+            const data = await response.json();
+            localStorage.setItem('user', data.user);
+            sessionStorage.setItem('token', data.jsonwebtoken);
+            router.push('/');
+        } else {
+            console.log("Invalid credentials !");
+        }
+    } catch (err) {
+        console.log("🚀 ~ file: Header.vue:7 ~ handlerLogOut ~ err", err)
+        
+    }
+};
+
 </script>
 
 <template>
@@ -13,6 +40,8 @@
                 <RouterLink to="/profile">profile</RouterLink>
             </li>
         </nav>
+
+        <button @click="handlerLogOut" type="button" class="header--logout">Log Out</button>
 
     </header>
 

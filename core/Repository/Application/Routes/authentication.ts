@@ -3,15 +3,10 @@ import expresss from 'express';
 import Database from '../../DatabaseRepository';
 import AuthenticationInteractor from '../AuthenticationInteractor';
 import SignInInteractor from '../SignInInteractor';
+import fs from 'fs';
 import uuid4 from "uuid4";
 const jwt = require('jsonwebtoken');
 const authentication = expresss.Router();
-
-declare module 'express-session' {
-    interface SessionData {
-        token: String;
-    }
-}
 
 authentication.post('/world/api/v1/login', async (req: Request, res: Response) => {
     const {email, password} = req.body;
@@ -26,7 +21,7 @@ authentication.post('/world/api/v1/login', async (req: Request, res: Response) =
             res.send();
         } else {
             const token = uuid4();
-            req.session.token = token;
+            fs.writeFileSync('./token.txt', token);
             jwt.sign({user: user.id.toString()}, token, { expiresIn: '1d' }, (err: any, jsonwebtoken: String) => {
                 if (err) res.status(500).send();
                 res.status(200).send({
@@ -57,12 +52,13 @@ authentication.post('/world/api/v1/signin', async (req: Request, res: Response) 
 
 authentication.get('/world/api/v1/logout', (req: Request, res: Response) => {
   const authHeader = req.headers["authorization"];
-  jwt.sign(authHeader, "", { expiresIn: 1 } , (logout: any, err: any) => {
+  const token = fs.readFileSync('./token.txt');
+  jwt.sign(authHeader, token.toString(), { expiresIn: 1 } , (logout: any, err: any) => {
     if (err) res.status(500).send();
     if (logout) {
         res.send({msg : 'Has sido desconectado' });
     } else {
-        res.send({msg:'Error'});
+        res.send({msg:'Error', err});
     }
   });
 });

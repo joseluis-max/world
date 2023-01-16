@@ -7,6 +7,7 @@ export type FileEventTarget = EventTarget & { files: FileList };
 const content = ref();
 const listImages: (string | ArrayBuffer | null)[] = [];
 const listVideos: (string | ArrayBuffer | null)[] = [];
+let token = sessionStorage.getItem('token');
 
 const onUploadImages = (ev: Event) => {
     const target: HTMLInputElement | null = ev.target as HTMLInputElement;
@@ -26,7 +27,7 @@ const onUploadVideos = (ev: Event) => {
     if (target.files != null) {
         for (const file of target.files) {
             const fileReader = new FileReader();
-            fileReader.readAsArrayBuffer(file);
+            fileReader.readAsBinaryString(file);
             fileReader.onloadend = () => {
                 listVideos.push(fileReader.result);
             }
@@ -34,18 +35,31 @@ const onUploadVideos = (ev: Event) => {
     }
 }
 
-const onClickUpload = (ev: Event) => {
+const onClickUpload = async (ev: Event) => {
     ev.preventDefault();
-    console.log(listImages);
-    console.log(listVideos);
-    console.log(content);
+    const headers = new Headers();
+    if (token === null) token = "";
+    headers.append('Content-Type', 'application/json');
+    headers.append('authorization', token);
+    console.log(token);
+    const response = await fetch('http://localhost:3000/world/api/v1/publication/upload', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+            content: content.value,
+            user: 3,
+            date: new Date(),
+            listImages: listImages,
+            listVideos: listVideos
+        }),
+    });
+    console.log(response);
 }
 
 </script>
 
 <template>
     <Header />
-    
     <div class="wall">
         <div class="wall--wrapper--form">
             <form class="wall--form" action="">

@@ -9,7 +9,6 @@ export default class AuthenticationInteractor {
     try {
       const response = await db.login(email, password);
       if (response.rowCount === 1) {
-        console.log(response.rows[0]);
         const data: User_T = response.rows[0];
         return new User(
         data.id,

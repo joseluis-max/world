@@ -1,5 +1,36 @@
 <script setup lang="ts">
+import { ref, type Ref } from "vue";
+import router from "../router";
 
+const email: Ref<string> = ref('');
+const password: Ref<string> = ref('');
+
+const handlerLogin = async (ev: Event) => {
+    ev.preventDefault();
+    try {
+        const response: Response = await fetch('http://localhost:3000/world/api/v1/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email.value,
+                password: password.value
+            }),
+        });
+
+        if (response.status === 200 && response.ok) {
+            const data = await response.json();
+            localStorage.setItem('user', data.user);
+            sessionStorage.setItem('token', data.jsonwebtoken);
+            router.push('/wall');
+        } else {
+            console.log("Invalid credentials !");
+        }
+    } catch (err) {
+        console.log("🚀 ~ file: Login.vue:31 ~ handlerLogin ~ err\n", err)
+    }
+};
 </script>
 
 <template>
@@ -7,15 +38,16 @@
         <h1 class="login--title">World</h1>
         <form class="login--form" action="">
             <h4 class="login--form--title">Login</h4>
-            <input class="login--form--input login--form--input--text" type="login_email" name="login_email" id="login_email" placeholder="Email">
-            <input class="login--form--input login--form--input--text" type="password" name="login_password" id="login_password" placeholder="Password">
-            <button class="login--form--button" type="submit">Sign In</button>
+            <input v-model="email" class="login--form--input login--form--input--text" type="login_email" name="login_email" id="login_email" placeholder="Email">
+            <input v-model="password" class="login--form--input login--form--input--text" type="password" name="login_password" id="login_password" placeholder="Password">
+            <button class="login--form--button" type="submit" @click="handlerLogin">Sign In</button>
         </form>
 
         <div class="login--info">
             <div class="login--info--content">
                 <h3 class="login--info--content-title">Welcome to World !</h3>
-                <p class="login--info--content-text">World is a social network for share and know new things with all the world,
+                <p class="login--info--content-text">
+                    World is a social network for share and know new things with all the world,
                     every post that you make is global and all the world can see it.
                     Enjoy discover new things, and new people !
                 </p>
