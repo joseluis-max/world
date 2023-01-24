@@ -35,9 +35,38 @@ class Database {
                                               updateAt ]);
   };
 
-  async uploadPublication(content: String, user: Number, date: Date, _listImages: Array<ArrayBuffer>, _listVideos: Array<String>) {
-      const query = `INSERT INTO world."Publication" (content, date, "user") VALUES ($1, $2, $3)`;
-      return await this.database.query(query, [content, date, user]);
+  async uploadPublication(content: String, user: Number, date: Date, listImages: Array<ArrayBuffer>, listVideos:  Array<ArrayBuffer>) {
+    const query_publication = `INSERT INTO world."Publication" (content, date, "user") VALUES ($1, $2, $3) RETURNING id;`;
+    const query_images = `INSERT INTO world."Image" (bytea, publication) VALUES ($1, $2);`;
+    const query_videos = `INSERT INTO world."Video" (bytea, publication) VALUES ($1, $2);`;
+    let id = null;
+
+    let response = await this.database.query(query_publication, [content, date, user]);
+    id = response.rows[0].id;
+
+    for (const image of listImages) {
+      response = await this.database.query(query_images, [image, id]);
+    }
+
+    for (const video of listVideos) {
+      response = await this.database.query(query_videos, [video, id]);
+    }
+    return response;
+  }
+
+  async getPublication() {
+    const query = 'SELECT * FROM "world"."Publication";';
+    return await this.database.query(query);
+  }
+
+  async getImages(id: Number) {
+    const query = 'SELECT * FROM "world"."Image" WHERE publication = $1;';
+    return await this.database.query(query, [id]);
+  }
+
+  async getVideos(id: Number) {
+    const query = 'SELECT * FROM "world"."Video" WHERE publication = $1;';
+    return await this.database.query(query, [id]);
   }
 }
 

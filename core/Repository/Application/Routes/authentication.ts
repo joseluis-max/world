@@ -42,11 +42,11 @@ authentication.post('/world/api/v1/signin', async (req: Request, res: Response) 
     const response = await signInInteractor.singIn(userName, email, firstName, lastName, password, birthDate, gender, age);
     console.log(response);
     if (response === 409){
-      res.status(409).send({msg: "Email already exists !"});
+      res.status(409).send({ msg: "Email already exists !" });
     } else if (response === 400) {
       res.status(400).send({ msg: "You are mising one or more fields, please fill and try again"});
     } else {
-      res.status(200).send(response);
+      res.status(200).send({ msg: "Succesfully"});
     }
 });
 

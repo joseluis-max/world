@@ -34,12 +34,26 @@ const handlerLogin = async (ev: Event) => {
 </script>
 
 <template>
-    <div class="login">
+<div class="login">
         <h1 class="login--title">World</h1>
         <form class="login--form" action="">
             <h4 class="login--form--title">Login</h4>
-            <input v-model="email" class="login--form--input login--form--input--text" type="login_email" name="login_email" id="login_email" placeholder="Email">
-            <input v-model="password" class="login--form--input login--form--input--text" type="password" name="login_password" id="login_password" placeholder="Password">
+            <input
+                v-model="email"
+                class="login--form--input login--form--input--text"
+                type="login_email"
+                name="login_email"
+                id="login_email"
+                placeholder="Email"
+            >
+            <input
+                v-model="password"
+                class="login--form--input login--form--input--text"
+                type="password"
+                name="login_password"
+                id="login_password"
+                placeholder="Password"
+            >
             <button class="login--form--button" type="submit" @click="handlerLogin">Sign In</button>
         </form>
 

@@ -1,4 +1,46 @@
 <script setup lang="ts">
+import { ref, type Ref } from "vue";
+
+const firstName: Ref<string> = ref('');
+const lastName: Ref<string> = ref('');
+const email: Ref<string> = ref('');
+const userName: Ref<string> = ref('');
+const password: Ref<string> = ref('');
+const birthDate: Ref<string> = ref('');
+const gender: Ref<string> = ref('');
+
+const handlerRegistration = async (ev: Event) => {
+    ev.preventDefault();
+    try {
+        const response = await fetch('http://localhost:3000/world/api/v1/signin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstName: firstName.value,
+                lastName: lastName.value,
+                email: email.value,
+                userName: userName.value,
+                password: password.value,
+                birthDate: birthDate.value,
+                gender: gender.value,
+                age: new Date().getFullYear() - parseInt(birthDate.value.split("/")[0])
+            })
+        })
+
+        if (response.status === 200 && response.ok) {
+            const data = await response.json();
+            console.log(data.msg);
+        } else {
+            const data = await response.json();
+            console.log(data.msg);
+        }
+    } catch (error) {
+        console.log(error);
+        console.log('Service not found !')
+    }
+};
 
 </script>
 
@@ -6,26 +48,68 @@
     <div class="signIn">
         <h1 class="signIn--title">Sign In</h1>
         <form class="signIn--form" action="">
-            <input class="signIn--form--input signIn--form--input--text" type="text" name="" id="" placeholder="First Name">
-            <input class="signIn--form--input signIn--form--input--text" type="text" name="" id="" placeholder="Last Name">
-            <input class="signIn--form--input signIn--form--input--text" type="text" name="" id="" placeholder="Email">
-            <input class="signIn--form--input signIn--form--input--text" type="text" name="" id="" placeholder="User Name">
-            <input class="signIn--form--input signIn--form--input--text" type="password" name="" id="" placeholder="Password">
-            <input class="signIn--form--input signIn--form--input--text" type="password" name="" id="" placeholder="Repeat Password">
-            <div class="signIn--from--wrapper">
+            <input
+                class="signIn--form--input signIn--form--input--text"
+                type="text"
+                v-model="firstName"
+                name=""
+                id=""
+                placeholder="First Name"
+            >
+            <input
+                class="signIn--form--input signIn--form--input--text"
+                type="text"
+                name=""
+                v-model="lastName"
+                id=""
+                placeholder="Last Name"
+            >
+            <input
+                class="signIn--form--input signIn--form--input--text"
+                type="text"
+                v-model="email"
+                name=""
+                id=""
+                placeholder="Email"
+            >
+            <input
+                class="signIn--form--input signIn--form--input--text"
+                type="text"
+                v-model="userName"
+                name=""
+                id=""
+                placeholder="User Name"
+            >
+            <input
+                class="signIn--form--input signIn--form--input--text"
+                type="password"
+                v-model="password"
+                name=""
+                id=""
+                placeholder="Password"
+            >
+            <!-- <input
+                class="signIn--form--input signIn--form--input--text"
+                type="password"
+                name=""
+                id=""
+                placeholder="Repeat Password"
+            > -->
+            <div
+                class="signIn--from--wrapper">
                 <label class="signIn--form--label" for="birthDate">Birth Date</label>
-                <input class="signIn--form--date signIn--form--input" type="date" name="" id="birthDate">
+                <input class="signIn--form--date signIn--form--input" v-model="birthDate" type="date" name="" id="birthDate">
             </div>
             <div class="signIn--from--wrapper">
                 <label class="" for="gender">Gender</label>
                 <div>
                     <label class="signIn--form--input" for="M">Male</label>
-                    <input class="signIn--form--input" type="radio" name="gender" value="m" id="M">
+                    <input class="signIn--form--input" v-model="gender" type="radio" name="gender" value="m" id="M">
                     <label class="signIn--form--input" for="F">Female</label>
-                    <input class="signIn--form--input" type="radio" name="gender" value="f" id="F">
+                    <input class="signIn--form--input" v-model="gender" type="radio" name="gender" value="f" id="F">
                 </div>
             </div>
-            <button class="signIn--form--button" type="submit">Crate Account</button>
+            <button class="signIn--form--button" @click="handlerRegistration" type="submit">Crate Account</button>
         </form>
     </div>
 </template>
